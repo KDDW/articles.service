@@ -1,6 +1,6 @@
 
 build:
-	go build -o kddw.articles.service src/main.go
+	go build -o articles.service src/main.go
 
 test:
 	echo "no tests yet"

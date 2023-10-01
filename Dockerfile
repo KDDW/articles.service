@@ -17,8 +17,6 @@ FROM alpine:latest
 
 WORKDIR /app
 
-COPY --from=BuildStage /app/bin/ /app/bin
+COPY --from=BuildStage /app/articles.service /app/articles.service
 
-COPY --from=BuildStage /app/cmd/ /app/cmd
-
-CMD ["/app/bin/auth"]
+CMD ["/app/articles.service"]
