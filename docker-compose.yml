@@ -1,0 +1,11 @@
+# compose file that builds the Dockerfile in the root of the project
+version: "3"
+
+services:
+  articles-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: always
+    ports:
+      - 3000:3000
