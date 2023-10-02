@@ -2,10 +2,12 @@
 version: "3"
 
 services:
-  articles-service:
+  app:
     build:
       context: .
       dockerfile: Dockerfile
-    restart: always
+    # restart: always
     ports:
       - 3000:3000
+    volumes:
+      - ./articles.db:/articles.db

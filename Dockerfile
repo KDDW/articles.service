@@ -1,9 +1,15 @@
 # Build stage
-FROM golang:1.20.8-alpine3.18 AS BuildStage
+FROM golang:1.21.1 AS BuildStage
 
-RUN apk add --no-cache make
+ENV CGO_ENABLED=1
+ENV GO111MODULE=on
 
-WORKDIR /app
+ENV APP_HOME /go/src/app
+RUN mkdir -p "$APP_HOME"
+
+WORKDIR "$APP_HOME"
+
+RUN apt-get update && apt-get install -y make gcc
 
 COPY . .
 
@@ -11,12 +17,21 @@ RUN go mod download
 
 RUN make build
 
-
-# Deploy stage
-FROM alpine:latest
+FROM golang:1.21.1 AS DeployStage
 
 WORKDIR /app
 
-COPY --from=BuildStage /app/articles.service /app/articles.service
+RUN apt-get update
+RUN apt-get install -y curl libssl-dev build-essential glibc-source gcc
 
-CMD ["/app/articles.service"]
+
+COPY --from=BuildStage /go/src/app/articles .
+COPY --from=BuildStage /go/src/app/docker-entrypoint.sh .
+
+RUN chmod +x docker-entrypoint.sh
+RUN chmod +x articles
+
+
+ENTRYPOINT ["sh", "/app/docker-entrypoint.sh"]
+
+
